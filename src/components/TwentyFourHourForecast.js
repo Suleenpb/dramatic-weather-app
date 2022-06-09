@@ -9,13 +9,14 @@ const TwentyFourHourForecast = (props) => {
 
     const result = props.region;
     const [forecast, setForecast] = useState('');
+    const [weatherIcon, setWeatherIcon] = useState('');
     const [inputForecast, setInputForecast] = useState([]);
     const [time, setTime] = useState([]);
     
     const currentWeather = async () => {
         const { status, data } = await API.get('/environment/24-hour-weather-forecast');
-        const apiForecast = data.items[0].periods[2].regions;
-        const inputForecast = data.items[0].periods[2]
+        const apiForecast = data.items[0].periods[0].regions;
+        const inputForecast = data.items[0].periods[0]
         const apiTimestamp = data.items[0].timestamp;
 
 
@@ -48,25 +49,32 @@ const TwentyFourHourForecast = (props) => {
         setInputForecast(inputForecast);
     }
     
-    var weatherIcon; 
-    switch(true) {
-        case (inputForecast.includes("thundery showers")):
-            weatherIcon = "thunderstorm-24hr";
-            break;
-        case (inputForecast.includes("fair")):
-            weatherIcon = "sunny-24h";
-            break;
-        case (inputForecast.includes("cloudy")):
-            weatherIcon = "cloudy-24h";
-            break;
-        default:
-            weatherIcon = '';
-            break;
-    }
 
     useEffect(() => {
         currentWeather();
-    }, [result]);
+        console.log("24hrIcon", weatherIcon);
+        console.log("24hrinputforecast", inputForecast);
+
+        switch(true) {
+            case (forecast.includes("Thundery")):
+                setWeatherIcon("thunderstorm-24hr");
+                break;
+            case (forecast.includes("Fair")):
+                setWeatherIcon("sunny-24hr");
+                break;
+            case (forecast.includes("Cloudy" || "Partly Cloudy (Day)")):
+                setWeatherIcon("cloudy-24hr");
+                break;
+            case (forecast.includes("Showers" || "Moderate Rain")):
+                setWeatherIcon("showers-24hr");
+                break;
+            case (forecast.includes("Light")):
+                setWeatherIcon("light-rain-24hr");  
+            /* default:
+                weatherIcon = 'sunny-24hr';s
+                break; */
+        }
+    }, [result, currentWeather]);
 
 
 
